@@ -14,6 +14,12 @@ namespace eProdaja.Services
             CreateMap<Database.Korisnici, Model.Korisnici>();
             CreateMap<Model.Requests.KorisniciInsertRequest, Database.Korisnici>();
             CreateMap<Model.Requests.KorisniciUpdateRequest, Database.Korisnici>();
+
+            CreateMap<Database.Proizvodi, Model.Proizvodi>();
+
+            CreateMap<Database.JediniceMjere, Model.JediniceMjere>();
+
+            CreateMap<Database.VrsteProizvodum, Model.VrsteProizvodum>();
         }
     }
 

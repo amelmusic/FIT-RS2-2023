@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using eProdaja.Model.Requests;
 using eProdaja.Services.Database;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,25 +21,10 @@ namespace eProdaja.Services
             _mapper = mapper;
         }
 
-        public List<Model.Korisnici> Get()
+        public async Task<List<Model.Korisnici>> Get()
         {
-            var entityList = _context.Korisnicis.ToList();
+            var entityList = await _context.Korisnicis.ToListAsync();
 
-            //var list = new List<Model.Korisnici>();
-            //foreach (var item in entityList)
-            //{
-            //    list.Add(new Model.Korisnici()
-            //    {
-            //        Email = item.Email,
-            //        Ime = item.Ime,
-            //        KorisnickoIme = item.KorisnickoIme,
-            //        Prezime = item.Prezime,
-            //        KorisnikId = item.KorisnikId,
-            //        Telefon = item.Telefon,
-            //    });
-            //}
-
-            //return list;
 
             return _mapper.Map<List<Model.Korisnici>>(entityList);
         }
