@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using eProdaja.Model.Requests;
+using eProdaja.Model.SearchObjects;
 using eProdaja.Services.Database;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,37 +12,19 @@ using System.Threading.Tasks;
 
 namespace eProdaja.Services
 {
-    public class KorisniciService : IKorisniciService
+    public class KorisniciService : BaseCRUDService<Model.Korisnici, Database.Korisnici, KorisniciSearchObject, KorisniciInsertRequest, KorisniciUpdateRequest>, IKorisniciService
     {
-        EProdajaContext _context;
-        public IMapper _mapper { get; set; }
         public KorisniciService(EProdajaContext context, IMapper mapper)
+            : base(context, mapper)
         {
-            _context = context;
-            _mapper = mapper;
         }
 
-        public async Task<List<Model.Korisnici>> Get()
+        public override async Task BeforeInsert(Korisnici entity, KorisniciInsertRequest insert)
         {
-            var entityList = await _context.Korisnicis.ToListAsync();
-
-
-            return _mapper.Map<List<Model.Korisnici>>(entityList);
-        }
-
-        public Model.Korisnici Insert(KorisniciInsertRequest request)
-        {
-            var entity = new Korisnici();
-            _mapper.Map(request, entity);
-
             entity.LozinkaSalt = GenerateSalt();
-            entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, request.Password);
-
-            _context.Korisnicis.Add(entity);
-            _context.SaveChanges();
-
-            return _mapper.Map<Model.Korisnici>(entity);
+            entity.LozinkaHash = GenerateHash(entity.LozinkaSalt, insert.Password);
         }
+
 
         public static string GenerateSalt()
         {
@@ -66,16 +49,14 @@ namespace eProdaja.Services
             return Convert.ToBase64String(inArray);
         }
 
-        public Model.Korisnici Update(int id, KorisniciUpdateRequest request)
+
+        public override IQueryable<Korisnici> AddInclude(IQueryable<Korisnici> query, KorisniciSearchObject? search = null)
         {
-            var entity = _context.Korisnicis.Find(id);
-
-            _mapper.Map(request, entity);
-
-            _context.SaveChanges();
-
-            return _mapper.Map<Model.Korisnici>(entity);
-
+            if(search?.IsUlogeIncluded == true)
+            {
+                query = query.Include("KorisniciUloges.Uloga");
+            }
+            return base.AddInclude(query, search);
         }
     }
 }

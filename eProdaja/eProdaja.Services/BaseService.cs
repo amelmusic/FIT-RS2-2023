@@ -31,6 +31,8 @@ namespace eProdaja.Services
 
             query = AddFilter(query, search);
 
+            query = AddInclude(query, search);
+
             result.Count = await query.CountAsync();
 
             if (search?.Page.HasValue == true && search?.PageSize.HasValue == true)
@@ -44,6 +46,11 @@ namespace eProdaja.Services
             var tmp = _mapper.Map<List<T>>(list);
             result.Result = tmp;
             return result;
+        }
+
+        public virtual IQueryable<TDb> AddInclude(IQueryable<TDb> query, TSearch? search = null)
+        {
+            return query;
         }
 
         public virtual IQueryable<TDb> AddFilter(IQueryable<TDb> query, TSearch? search = null)
