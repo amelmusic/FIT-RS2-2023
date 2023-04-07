@@ -20,5 +20,18 @@ namespace eProdaja.Controllers
         {
             return await (_service as IProizvodiService).Activate(id);
         }
+
+        [HttpPut("{id}/hide")]
+        public virtual async Task<Model.Proizvodi> Hide(int id)
+        {
+            return await (_service as IProizvodiService).Hide(id);
+        }
+
+
+        [HttpGet("{id}/allowedActions")]
+        public virtual async Task<List<string>> AllowedActions(int id)
+        {
+            return await (_service as IProizvodiService).AllowedActions(id);
+        }
     }
 }
