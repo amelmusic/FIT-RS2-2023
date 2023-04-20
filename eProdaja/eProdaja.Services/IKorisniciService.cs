@@ -9,6 +9,6 @@ namespace eProdaja.Services
 {
     public interface IKorisniciService : ICRUDService<Model.Korisnici, Model.SearchObjects.KorisniciSearchObject, Model.Requests.KorisniciInsertRequest, Model.Requests.KorisniciUpdateRequest>
     {
-
+        public Task<Model.Korisnici> Login(string username, string password);
     }
 }
