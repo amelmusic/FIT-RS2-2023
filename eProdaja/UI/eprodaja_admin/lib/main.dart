@@ -1,7 +1,15 @@
+import 'package:eprodaja_admin/providers/product_provider.dart';
+import 'package:eprodaja_admin/utils/util.dart';
+import 'package:provider/provider.dart';
+
+import './screens/product_list_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyMaterialApp());
+  runApp(MultiProvider(
+    providers: [ChangeNotifierProvider(create: (_) => ProductProvider())],
+    child: const MyMaterialApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -125,40 +133,81 @@ class MyMaterialApp extends StatelessWidget {
 }
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  LoginPage({Key? key}) : super(key: key);
+
+  TextEditingController _usernameController = new TextEditingController();
+  TextEditingController _passwordController = new TextEditingController();
+  late ProductProvider _productProvider;
 
   @override
   Widget build(BuildContext context) {
+    _productProvider = context.read<ProductProvider>();
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Login"),
       ),
       body: Center(
         child: Container(
-          
           constraints: BoxConstraints(maxWidth: 400, maxHeight: 400),
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(children: [
-                Image.network("https://www.fit.ba/content/public/images/og-image.jpg", height: 100, width: 100,),
+                // Image.network("https://www.fit.ba/content/public/images/og-image.jpg", height: 100, width: 100,),
+                Image.asset(
+                  "assets/images/logo.jpg",
+                  height: 100,
+                  width: 100,
+                ),
                 TextField(
                   decoration: InputDecoration(
-                    labelText: "Username",
-                    prefixIcon: Icon(Icons.email)
-                  ),
+                      labelText: "Username", prefixIcon: Icon(Icons.email)),
+                  controller: _usernameController,
                 ),
-                SizedBox(height: 8,),
+                SizedBox(
+                  height: 8,
+                ),
                 TextField(
                   decoration: InputDecoration(
-                    labelText: "Password",
-                    prefixIcon: Icon(Icons.password)
-                  ),
+                      labelText: "Password", prefixIcon: Icon(Icons.password)),
+                  controller: _passwordController,
                 ),
-                SizedBox(height: 8,),
-                ElevatedButton(onPressed: () {
-                    print("login proceed");
-                }, child: Text("Login"))
+                SizedBox(
+                  height: 8,
+                ),
+                ElevatedButton(
+                    onPressed: () async {
+                      var username = _usernameController.text;
+                      var password = _passwordController.text;
+                      _passwordController.text = username;
+
+                      print("login proceed $username $password");
+
+                      Authorization.username = username;
+                      Authorization.password = password;
+
+                      try {
+                        await _productProvider.get();
+
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const ProductListScreen(),
+                          ),
+                        );
+                      } on Exception catch (e) {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: Text("Error"),
+                              content: Text(e.toString()),
+                              actions: [
+                                TextButton(onPressed: () => Navigator.pop(context), child: Text("OK"))
+                              ],
+                            ));
+                      }
+                    },
+                    child: Text("Login"))
               ]),
             ),
           ),
