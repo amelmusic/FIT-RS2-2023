@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:eprodaja_admin/main.dart';
 import 'package:eprodaja_admin/screens/product_detail_screen.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +54,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               onTap: () {
                 Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => const ProductDetailScreen(),
+                          builder: (context) => ProductDetailScreen(),
                         ),
                       );
               },

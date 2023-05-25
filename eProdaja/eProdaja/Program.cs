@@ -84,7 +84,7 @@ using (var scope = app.Services.CreateScope())
 
     var conn = dataContext.Database.GetConnectionString();
 
-    dataContext.Database.Migrate();
+    //dataContext.Database.Migrate();
     
 
 }
