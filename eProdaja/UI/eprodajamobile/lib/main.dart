@@ -70,9 +70,6 @@ class HomePage extends StatelessWidget {
     _userProvider = Provider.of<UserProvider>(context, listen: false);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Flutter Row Example"),
-      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -84,9 +81,9 @@ class HomePage extends StatelessWidget {
                       fit: BoxFit.fill)),
               child: Stack(children: [
                 Positioned(
-                    left: 120,
+                    left: 110,
                     top: 0,
-                    width: 80,
+                    width: 90,
                     height: 120,
                     child: Container(
                         decoration: BoxDecoration(
@@ -94,7 +91,7 @@ class HomePage extends StatelessWidget {
                       image: AssetImage("assets/images/light-1.png"),
                     )))),
                 Positioned(
-                    right: 40,
+                    right: 60,
                     top: 0,
                     width: 80,
                     height: 120,
@@ -130,16 +127,18 @@ class HomePage extends StatelessWidget {
                       controller: _usernameController,
                       decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: "Email or phone",
+                          hintText: "Username",
                           hintStyle: TextStyle(color: Colors.grey[400])),
                     ),
                   ),
                   Container(
                     padding: EdgeInsets.all(8),
                     child: TextField(
+                      obscureText: true,
                       controller: _passwordController,
                       decoration: InputDecoration(
                           border: InputBorder.none,
+                          
                           hintText: "Pasword",
                           hintStyle: TextStyle(color: Colors.grey[400])),
                     ),

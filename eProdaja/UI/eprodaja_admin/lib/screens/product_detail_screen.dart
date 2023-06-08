@@ -1,5 +1,8 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:eprodaja_admin/models/jedinice_mjere.dart';
 import 'package:eprodaja_admin/models/product.dart';
 import 'package:eprodaja_admin/models/vrste_proizvoda.dart';
@@ -7,6 +10,7 @@ import 'package:eprodaja_admin/providers/jedinice_mjere.dart';
 import 'package:eprodaja_admin/providers/product_provider.dart';
 import 'package:eprodaja_admin/providers/vrste_proizvoda.dart';
 import 'package:eprodaja_admin/widgets/master_screen.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
@@ -88,20 +92,31 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Padding(padding:  EdgeInsets.all(10),
-              child: ElevatedButton(onPressed: () async  {
-                  _formKey.currentState?.saveAndValidate();
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: ElevatedButton(
+                    onPressed: () async {
+                      _formKey.currentState?.saveAndValidate();
 
-                  print(_formKey.currentState?.value);
-                  print(_formKey.currentState?.value['naziv']);
-                  
-                  try {
-                    if (widget.product == null) {
-                      await _productProvider.insert(_formKey.currentState?.value);
-                    } else {
-                      await _productProvider.update(widget.product!.proizvodId!, _formKey.currentState?.value);
-                    }
-                  } on Exception catch (e) {
+                      print(_formKey.currentState?.value);
+                      print(_formKey.currentState?.value['naziv']);
+
+                      var request = new Map.from(_formKey.currentState!.value);
+
+                      request['slika'] = _base64Image;
+
+                      print(request['slika']);
+                      
+                      try {
+                        if (widget.product == null) {
+                          await _productProvider
+                              .insert(request);
+                        } else {
+                          await _productProvider.update(
+                              widget.product!.proizvodId!,
+                              request);
+                        }
+                      } on Exception catch (e) {
                         showDialog(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
@@ -113,10 +128,10 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
                                         child: Text("OK"))
                                   ],
                                 ));
-                  }
-                
-
-              }, child: Text("Sačuvaj")),)
+                      }
+                    },
+                    child: Text("Sačuvaj")),
+              )
             ],
           )
         ],
@@ -205,8 +220,42 @@ class _ProductDetailScreenState extends State<ProductDetailScreen> {
               ),
             ),
           ],
+        ),
+        Row(
+          children: [
+            Expanded(
+                child: FormBuilderField(
+              name: 'imageId',
+              builder: ((field) {
+                return InputDecorator(
+                  decoration: InputDecoration(
+                      label: Text('Odaberite sliku'),
+                      errorText: field.errorText),
+                  child: ListTile(
+                    leading: Icon(Icons.photo),
+                    title: Text("Select image"),
+                    trailing: Icon(Icons.file_upload),
+                    onTap: getImage,
+                  ),
+                );
+              }),
+            ))
+          ],
         )
       ]),
     );
+  }
+  
+  File? _image;
+  String? _base64Image;
+
+  Future getImage()  async {
+    var result = await FilePicker.platform.pickFiles(type: FileType.image);
+
+    if(result != null && result.files.single.path != null) {
+      _image = File(result.files.single.path!);
+      _base64Image = base64Encode(_image!.readAsBytesSync());
+    }
+
   }
 }

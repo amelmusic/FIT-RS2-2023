@@ -57,12 +57,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
               _buildHeader(),
               _buildProductSearch(),
               Container(
-                height: 200,
+                height: 500,
                 child: GridView(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 1,
+                      crossAxisCount: 2,
                       childAspectRatio: 4 / 3,
-                      crossAxisSpacing: 20,
+                      crossAxisSpacing: 10,
                       mainAxisSpacing: 30),
                   scrollDirection: Axis.horizontal,
                   children: _buildProductCardList(),
